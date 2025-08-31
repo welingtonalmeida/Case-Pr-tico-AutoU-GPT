@@ -75,6 +75,3 @@ def api_classify():
     category = classify_email(email_text)
     response = generate_response(category)
     return jsonify({"category": category, "response": response})
-
-if __name__ == "__main__":
-    app.run(debug=True)

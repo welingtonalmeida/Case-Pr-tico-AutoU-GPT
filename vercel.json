@@ -1,0 +1,34 @@
+{
+  "builds": [
+    {
+      "src": "api/app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/api/app.py"
+    }
+  ]
+}
+```
+eof
+
+* **`"builds"`**: Diz à Vercel para construir sua aplicação usando o `api/app.py` como ponto de entrada.
+* **`"routes"`**: Redireciona todas as requisições (`/(.*)`) para o seu arquivo principal (`/api/app.py`).
+
+### 2. Ajustar a Estrutura do Projeto
+
+Para que o `vercel.json` funcione, você precisa organizar seus arquivos da seguinte forma:
+
+```
+/SeuProjeto
+|-- vercel.json
+|-- static/
+|   |-- style.css
+|-- templates/
+|   |-- index.html
+|-- api/
+|   |-- app.py       <-- SEU CÓDIGO AGORA FICA AQUI!
+|-- requirements.txt <-- OBRIGATÓRIO PARA A VERCELL
