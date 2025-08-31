@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Classificador de Emails</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+<h1>📧 Classificador de Emails</h1>
+<form id="uploadForm" method="post" enctype="multipart/form-data">
+<label>Upload de Arquivo (.txt ou .pdf):</label>
+<input type="file" name="file"><br><br>
+
+
+<label>Ou cole o texto do email:</label><br>
+<textarea name="email_text" rows="6" cols="50"></textarea><br><br>
+
+
+<button type="submit">Classificar</button>
+</form>
+
+
+<div id="result" class="result-box" style="display: none;"></div>
+</div>
+
+
+<script>
+document.getElementById("uploadForm").onsubmit = async (e) => {
+e.preventDefault();
+let form = e.target;
+let formData = new FormData(form);
+let resultBox = document.getElementById("result");
+
+
+// Oculta a caixa de resultado antiga
+resultBox.style.display = 'none';
+resultBox.classList.remove('error');
+
+
+let response;
+let result;
+
+
+try {
+// Envia a requisição
+response = await fetch("/api/classify", {method: "POST", body: formData});
+result = await response.json();
+
+
+// Verifica se a resposta foi bem-sucedida (status 200)
+if (response.ok) {
+resultBox.style.display = 'block';
+resultBox.innerHTML =
+`<h2>Resultado:</h2>
+<p><strong>Categoria:</strong> ${result.category}</p>
+<p><strong>Resposta sugerida:</strong> ${result.response}</p>`;
+} else {
+// Caso a resposta não seja 200, exibe a mensagem de erro do servidor
+resultBox.style.display = 'block';
+resultBox.classList.add('error');
+resultBox.innerHTML = `<h2>Erro:</h2><p>${result.error || 'Ocorreu um erro desconhecido.'}</p>`;
+}
+
+
+} catch (error) {
+// Se houver um erro na rede ou no JSON
+console.error("Erro na requisição:", error);
+resultBox.style.display = 'block';
+resultBox.classList.add('error');
+resultBox.innerHTML = `<h2>Erro na Conexão:</h2><p>Não foi possível conectar ao servidor.</p>`;
+} finally {
+// Limpa os campos do formulário independentemente do sucesso ou falha da requisição
+form.querySelector('textarea[name="email_text"]').value = '';
+form.querySelector('input[name="file"]').value = '';
+}
+};
+</script>
+</body>
+</html>
